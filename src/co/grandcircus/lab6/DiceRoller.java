@@ -9,40 +9,52 @@ import java.util.Scanner;
 public class DiceRoller {
 
     public static void main(String[] args) {
+	playingDiceLoop();
+    }
+
+    /**
+     * This method contains the primary logic loop. It greets the user, asks them
+     * how many sides the dice should have, allows the user to roll those dice until
+     * they want to stop, then allows the user to try again with different dice if
+     * they want, but saying goodbye and ending the program if they do not.
+     * 
+     */
+    private static void playingDiceLoop() {
+	String continueProgram;
+	int diceSides;
 	Scanner scnr = new Scanner(System.in);
 
+	// Greet the user
 	System.out.println("Hello, welcome to the dice roller!");
 
-	playingDiceLoop(scnr);
-
-	System.out.println("Alea iacta est! Goodbye, and beware the Ides of March!");
-
-	scnr.close();
-    }
-
-    /**
-     * STUFF
-     * 
-     * @param scnr
-     */
-    private static void playingDiceLoop(Scanner scnr) {
-	String continueProgram;
-	int sides;
+	// Loop program until user decides to quit
 	do {
-	    sides = getValidDiceSides(scnr);
+	    // Ask the user how many sides the dice should have.
+	    diceSides = getValidDiceSides(scnr);
 
-	    rollingDiceLoop(scnr, sides);
+	    // Roll those dice until the user chooses to quit rolling them
+	    rollingDiceLoop(scnr, diceSides);
 
-	    System.out.println("Would you like to try dice with different numbers of side? (y/N)");
+	    // Ask if user would like to start over with different-sided dice
+	    System.out.println("Would you like to try dice with different numbers of side? (Y/n)");
 	    continueProgram = scnr.nextLine();
 
-	} while (continueProgram.equals("y"));
+	} while (!continueProgram.equals("n"));
+
+	// Say goodbye and close scanner
+	System.out.println("Alea iacta est! Goodbye, and beware the Ides of March!");
+	scnr.close();
+
     }
 
     /**
+     * This method asks the user how many sides they want on the dice they are about
+     * to roll. It takes a Scanner as a parameter, and uses that to read user input,
+     * validating that the input is an integer that is greater than zero, then
+     * returning the inputted integer.
      * 
-     * @param scnr
-     * @return
+     * @param scnr (Scanner)
+     * @return diceSides (integer)
      */
     private static int getValidDiceSides(Scanner scnr) {
 	boolean inputIsValid = false;
@@ -69,24 +81,29 @@ public class DiceRoller {
     }
 
     /**
+     * This method takes a Scanner (to read input) and an integer (representing the
+     * number of sides on a die) as parameters. It prompts the user to roll the
+     * dice, then displays the results of those rolls. It loops, allowing the user
+     * to re-roll the dice, until the user wishes to stop rolling.
      * 
-     * @param scnr
-     * @param sides
+     * @param scnr (Scanner)
+     * @param sides (integer)
      */
     private static void rollingDiceLoop(Scanner scnr, int sides) {
 	String rollAgain;
 	do {
-	    // prompt user to roll
+	    // Prompt the user to roll dice
 	    System.out.print("\nHit enter to roll the dice");
 	    scnr.nextLine();
 
-	    // display results
+	    // Get results for two dice rolls
 	    int dieOneResult = rollDie(sides);
 	    int dieTwoResult = rollDie(sides);
 
+	    // Display the results of the two rolls.
 	    displayResults(sides, dieOneResult, dieTwoResult);
 
-	    // ask if user wants to roll again
+	    // Ask if user wants to roll again
 	    System.out.println("Would you like to roll again? (Y/n)");
 	    rollAgain = scnr.nextLine().toLowerCase().trim();
 
@@ -94,10 +111,15 @@ public class DiceRoller {
     }
 
     /**
+     * This method takes an integer representing the number of sides on a die, and
+     * two integers that represent the result of two rolls of a dice with the
+     * specified number of sides. It prints the results of the two rolls, and if the
+     * dice have six sides, fetches slang terms (from the game Craps) for the
+     * corresponding combination of dice rolls.
      * 
-     * @param sides
-     * @param dieOneResult
-     * @param dieTwoResult
+     * @param sides (integer)
+     * @param dieOneResult (integer)
+     * @param dieTwoResult (integer)
      */
     private static void displayResults(int sides, int dieOneResult, int dieTwoResult) {
 	int dieSum = dieOneResult + dieTwoResult;
@@ -109,20 +131,25 @@ public class DiceRoller {
 
 	// If playing Craps, check rolls and assign slang
 	if (sides == 6) {
-	    slang = getCrapsSlang(dieOneResult, dieTwoResult, dieSum);
+	    slang = getCrapsSlang(dieOneResult, dieTwoResult);
 	    // Print roll and slang
 	    System.out.printf("You rolled %d! %s!!%n%n", dieSum, slang);
+	} else {
+	    System.out.println("Total: " + dieSum);
 	}
     }
 
     /**
+     * This method takes two integers that represent two rolls on six-sided dice,
+     * then checks for the corresponding Craps slang term for the rolls, returning
+     * the appropriate Slang term as a String.
      * 
-     * @param dieOneResult
-     * @param dieTwoResult
-     * @param dieSum
-     * @return
+     * @param dieOneResult (integer)
+     * @param dieTwoResult (integer)
+     * @return Slang (String)
      */
-    private static String getCrapsSlang(int dieOneResult, int dieTwoResult, int dieSum) {
+    private static String getCrapsSlang(int dieOneResult, int dieTwoResult) {
+	int dieSum = dieOneResult + dieTwoResult;
 	String slang;
 	// When both rolls were the same (The Hard Way)
 	if (dieOneResult == dieTwoResult) {
@@ -166,12 +193,23 @@ public class DiceRoller {
     }
 
     /**
+     * This method takes an integer (representing the number of sides on a die),
+     * then using the Random class, returns an integer representing a pseudorandom
+     * integer representing a roll of a die with the specified number of sides.
      * 
-     * @param sides
-     * @return
+     * @param sides (integer)
+     * @return integer
      */
     private static int rollDie(int sides) {
 	Random die = new Random();
+	/*
+	 * You must add 1 to the result of nextInt because its range is 0 (inclusive)
+	 * which makes no sense on a die, up to whatever integer is provided as an
+	 * argument (exclusive). Here, because the number of sides is provided as an
+	 * argument, nextInt returns an integer between (0 and (sides-1). Adding one,
+	 * makes this function return and integer between (1 and (sides)).
+	 * 
+	 */
 	return die.nextInt(sides) + 1;
     }
 
