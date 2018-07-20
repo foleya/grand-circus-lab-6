@@ -51,7 +51,7 @@ public class DiceRoller {
      * This method asks the user how many sides they want on the dice they are about
      * to roll. It takes a Scanner as a parameter, and uses that to read user input,
      * validating that the input is an integer that is greater than zero, then
-     * returning the inputted integer.
+     * returning the chosen integer.
      * 
      * @param scnr (Scanner)
      * @return diceSides (integer)
@@ -101,57 +101,40 @@ public class DiceRoller {
 	    int dieTwoResult = rollDie(sides);
 
 	    // Display the results of the two rolls.
-	    displayResults(sides, dieOneResult, dieTwoResult);
+	    int dieSum = dieOneResult + dieTwoResult;
+	    System.out.println("Die 1: " + dieOneResult);
+	    System.out.println("Die 2: " + dieTwoResult);
+
+	    // If playing craps, fetch the slang and print it
+	    if (sides == 6) {
+		String slang;
+		slang = getCrapsSlang(dieOneResult, dieTwoResult);
+		System.out.printf("You rolled %d! %s!!%n%n", dieSum, slang);
+	    } else {
+		// Otherwise just print the total.
+		System.out.println("Total: " + dieSum);
+	    }
 
 	    // Ask if user wants to roll again
-	    System.out.println("Would you like to roll again? (Y/n)");
+	    System.out.print("Would you like to roll again? (Y/n)");
 	    rollAgain = scnr.nextLine().toLowerCase().trim();
 
 	} while (!rollAgain.equals("n"));
     }
 
     /**
-     * This method takes an integer representing the number of sides on a die, and
-     * two integers that represent the result of two rolls of a dice with the
-     * specified number of sides. It prints the results of the two rolls, and if the
-     * dice have six sides, fetches slang terms (from the game Craps) for the
-     * corresponding combination of dice rolls.
-     * 
-     * @param sides (integer)
-     * @param dieOneResult (integer)
-     * @param dieTwoResult (integer)
-     */
-    private static void displayResults(int sides, int dieOneResult, int dieTwoResult) {
-	int dieSum = dieOneResult + dieTwoResult;
-	String slang;
-
-	// Print results
-	System.out.println("Die 1: " + dieOneResult);
-	System.out.println("Die 2: " + dieTwoResult);
-
-	// If playing Craps, check rolls and assign slang
-	if (sides == 6) {
-	    slang = getCrapsSlang(dieOneResult, dieTwoResult);
-	    // Print roll and slang
-	    System.out.printf("You rolled %d! %s!!%n%n", dieSum, slang);
-	} else {
-	    System.out.println("Total: " + dieSum);
-	}
-    }
-
-    /**
      * This method takes two integers that represent two rolls on six-sided dice,
      * then checks for the corresponding Craps slang term for the rolls, returning
-     * the appropriate Slang term as a String.
+     * the appropriate slang term as a String.
      * 
      * @param dieOneResult (integer)
      * @param dieTwoResult (integer)
-     * @return Slang (String)
+     * @return slang (String)
      */
     private static String getCrapsSlang(int dieOneResult, int dieTwoResult) {
 	int dieSum = dieOneResult + dieTwoResult;
 	String slang;
-	// When both rolls were the same (The Hard Way)
+	// When both rolls were the same ("The Hard Way")
 	if (dieOneResult == dieTwoResult) {
 	    if (dieSum == 2) {
 		slang = "Snake Eyes";
@@ -167,7 +150,7 @@ public class DiceRoller {
 		slang = "Boxcars";
 	    }
 
-	    // When rolls are different (The Easy Way)
+	    // When rolls are different ("The Easy Way")
 	} else {
 	    if (dieSum == 3) {
 		slang = "Ace Deuce";
@@ -194,7 +177,7 @@ public class DiceRoller {
 
     /**
      * This method takes an integer (representing the number of sides on a die),
-     * then using the Random class, returns an integer representing a pseudorandom
+     * then using the Random class, returns an integer representing a pseudo-random
      * integer representing a roll of a die with the specified number of sides.
      * 
      * @param sides (integer)
@@ -204,10 +187,10 @@ public class DiceRoller {
 	Random die = new Random();
 	/*
 	 * You must add 1 to the result of nextInt because its range is 0 (inclusive)
-	 * which makes no sense on a die, up to whatever integer is provided as an
-	 * argument (exclusive). Here, because the number of sides is provided as an
-	 * argument, nextInt returns an integer between (0 and (sides-1). Adding one,
-	 * makes this function return and integer between (1 and (sides)).
+	 * whereas the lowest value on most dies is 1, up to whatever integer is
+	 * provided as an argument (exclusive). Here, because the number of sides is
+	 * provided as an argument, nextInt returns an integer between (0 and (sides-1).
+	 * Adding one, makes this function return and integer between (1 and (sides)).
 	 * 
 	 */
 	return die.nextInt(sides) + 1;
